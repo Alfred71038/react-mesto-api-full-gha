@@ -1,0 +1,19 @@
+.profile {
+    display: flex;
+    max-width: 880px;
+    margin: 40px auto 51px auto;
+    position: relative;
+}
+
+.profile__avatar:hover {
+    opacity: .2;
+  }
+
+@media screen and (max-width: 900px) {
+    .profile {
+        max-width: 282px;
+        margin: 40px auto 36px auto;
+        flex-direction: column;
+        align-items: center;
+    }
+}

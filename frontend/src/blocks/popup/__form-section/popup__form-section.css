@@ -1,0 +1,26 @@
+.popup__form-section {
+    display: flex;
+    flex-direction: column;
+    width: 358px;
+    margin-bottom: 2px;
+    padding: 0;
+}
+
+.popup__form-section:nth-of-type(2n){
+    margin-bottom: 20px;
+}
+
+
+
+@media screen and (max-width: 900px) {
+    .popup__form-section {
+        max-width: 238px;
+        margin: 0 22px 0;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .popup__form-section:nth-of-type(2n) {
+        margin: 0 22px 16px;
+    }
+}

@@ -1,0 +1,24 @@
+.cards {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 282px);
+    grid-template-rows: repeat(2, 361px);
+    grid-template-areas: 
+        "first second";
+    gap: 20px 17px;
+}
+
+@media screen and (max-width: 900px) {
+    .cards {
+        grid-template-columns: repeat(1, 282px);
+        grid-template-rows: repeat(6, 361px);
+        grid-template-areas: 
+            'first'
+            'second';
+        gap: 20px 0;
+        justify-content: center;
+        margin: auto;
+    }
+}

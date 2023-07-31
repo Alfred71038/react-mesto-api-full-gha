@@ -1,0 +1,11 @@
+.element__place-count {
+    color: #000;
+    font-family: "Inter";
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 16px;
+    margin: 0;
+    text-align: center;
+
+    height: 13px;
+}
