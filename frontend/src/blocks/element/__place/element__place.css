@@ -1,0 +1,12 @@
+.element__place {
+    max-width: 246px;
+    margin: 0;
+    margin-top: 20px;
+    margin-left: 21px;
+    margin-right: 20px;
+    margin-bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
