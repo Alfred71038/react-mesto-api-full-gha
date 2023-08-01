@@ -1,0 +1,8 @@
+@media screen and (max-width: 900px) {
+    .popup__button-image{
+        right: 0;
+        width: 20px;
+        height: 20px;
+        object-fit: cover;
+    }
+}

@@ -1,0 +1,17 @@
+.authentication__input {
+    min-height: 27px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    color: #CCCCCC;
+    background-color: transparent;
+    border: 0;
+    border-bottom: 2px solid #CCCCCC;
+    margin-bottom: 216px;
+}
+
+.authentication__input:first-child {
+    margin-bottom: 30px;
+}

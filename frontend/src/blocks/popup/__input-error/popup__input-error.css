@@ -1,0 +1,15 @@
+.popup__input-error {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    color: #FF0000;
+    opacity: 1;
+    max-width: 358px;
+    min-height: 30px;
+}
+
+.popup__input-error:nth-of-type(2n) {
+    margin-bottom: 28px;
+}

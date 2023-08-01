@@ -1,0 +1,8 @@
+@media screen and (max-width: 900px) {
+    .profile__edit-image{
+        width: 7.5px;
+        height: 7.5px;
+        object-fit: cover;
+        padding: 4.25px;
+    }
+}

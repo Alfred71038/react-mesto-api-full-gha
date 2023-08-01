@@ -1,0 +1,6 @@
+.popup__status_type_fail {
+    background:  no-repeat center url(../../../../images/fail.png);
+    min-width: 120px;
+    min-height: 120px;
+    margin: 60px 150px 32px;
+}
