@@ -16,10 +16,6 @@ const router = require('./routes/index');
 
 const error = require('./middlewares/error');
 
-const cors = require('./middlewares/cors');
-
-const { requestLogger, errorLogger } = require('./middlewares/logger');
-
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => {
     console.log('Подключение к mongodb.');
@@ -31,13 +27,7 @@ app.use(bodyParser.json());
 
 app.use(cookieParser());
 
-app.use(requestLogger);
-
-app.use(cors);
-
 app.use(router);
-
-app.use(errorLogger);
 
 app.use(errors());
 

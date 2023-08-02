@@ -6,25 +6,25 @@ import logo from '../images/logo.svg';
 function Header({ loggedIn, userEmail, signOut }) {
 
     const location = useLocation();
-    const textLink = location.pathname === '/signin' ? "Регистрация" : 'Войти';
+    const textLink = location.pathname === '/sign-in' ? "Регистрация" : 'Войти';
     const signOutText = loggedIn ? 'Выйти' : textLink;
     const email = userEmail;
     return (
         <header className="header">
             <div className='header__container'>
-                <Link to="/">
+                <Link to="/main">
                     <img src={logo} alt="Логотип" className="logo" />
                 </Link>
                 {loggedIn && <p className='header__email'>{email}</p>}
                 <Routes>
-                    <Route path='/signup'
+                    <Route path='/sign-up'
                         element={
-                            <Link to='/signin' className='header__links'>Войти</Link>
+                            <Link to='/sign-in' className='header__links'>Войти</Link>
                         }
                     />
-                    <Route path='/signin'
+                    <Route path='/sign-in'
                         element={
-                            <Link to='/signup' className='header__links'>Регистрация</Link>
+                            <Link to='/sign-up' className='header__links'>Регистрация</Link>
                         }
                     />
                 </Routes>

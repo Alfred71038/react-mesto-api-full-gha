@@ -94,9 +94,9 @@ class Api {
 }
 
 const api = new Api ({
-    url: 'https://backalfred71038.nomoreparties.co', //"http://localhost:3001",
+    url: 'https://mesto.nomoreparties.co/v1/cohort-64',
     headers: {
-        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        authorization: '0d29d6a1-12b3-4f3a-8832-50cb159ade75',
         "Content-Type": "application/json"
     }
   });
