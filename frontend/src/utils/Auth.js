@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://backalfred71038.nomoreparties.co/';
+export const BASE_URL = 'https://backalfred71038.nomoreparties.co';
 
 function checkStatusError (res) {
     if(res.ok) {
