@@ -9,7 +9,7 @@
 
 ## Ссылки на проект
 
-IP-адрес 158.160.65.84
+IP 158.160.65.84
 
 Frontend https://alfred71038.nomoreparties.co
 

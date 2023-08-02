@@ -93,12 +93,10 @@ class Api {
 
 }
 
-const token = localStorage.getItem("jwt")
-
 const api = new Api ({
-    url: 'https://backalfred71038.nomoreparties.co',
+    url: 'https://backalfred71038.nomoreparties.co', //"http://localhost:3001",
     headers: {
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
         "Content-Type": "application/json"
     }
   });

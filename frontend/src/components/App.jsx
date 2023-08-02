@@ -109,14 +109,14 @@ function App() {
     function signOut() {
         setLoggedIn(false);
         localStorage.removeItem('token')
-        navigate('/sign-in', { replace: true })
+        navigate('/signin', { replace: true })
     }
 
     function handleRegisterSubmit({ email, password }) {
         auth.register({ email, password })
             .then(() => {
                 setIsInfoTooltip(true);
-                navigate('/sign-in')
+                navigate('/signin')
             })
             .catch(err => {
                 setIsInfoTooltip(false);
@@ -136,7 +136,7 @@ function App() {
                 if (res) {
                     localStorage.setItem('token', res.token);
                     handleLogin(email);
-                    navigate('/main');
+                    navigate('/');
                 }
             })
             .catch(err => {
@@ -161,7 +161,7 @@ function App() {
             }
         }
         tokenCheck();
-    }, [])
+    },[])
 
 
     useEffect(() => {
@@ -185,7 +185,7 @@ function App() {
                     userEmail={userEmail}
                 />
                 <Routes>
-                    <Route path='/main'
+                    <Route path='/'
                         element={(
                             <>
                                 <ProtectedRoute
@@ -207,17 +207,17 @@ function App() {
                         )} />
 
 
-                    <Route path='/sign-up'
+                    <Route path='/signup'
                         element={<Register
                             handleRegisterSubmit={handleRegisterSubmit} />}
                     />
 
-                    <Route path='/sign-in'
+                    <Route path='/signin'
                         element={<Login
                             handleLoginSubmit={handleLoginSubmit} />}
                     />
 
-                    <Route path='*' element={<Navigate to='/main' replace />} />
+                    <Route path='*' element={<Navigate to='/' replace />} />
 
                 </Routes>
 

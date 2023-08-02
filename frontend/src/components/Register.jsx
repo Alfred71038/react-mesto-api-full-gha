@@ -60,7 +60,7 @@ function Register({ handleRegisterSubmit }) {
                 </button>
             </form>
             <p className="register__sign-in">Уже зарегистрированы?&ensp;
-                <Link to='/sign-in' className="register__login-link" href="#">Войти</Link>
+                <Link to='/signin' className="register__login-link" href="#">Войти</Link>
             </p>
         </div>
     )
