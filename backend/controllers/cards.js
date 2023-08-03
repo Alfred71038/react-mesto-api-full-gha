@@ -18,18 +18,16 @@ const getCards = (req, res, next) => {
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  Card.create({
-    name,
-    link,
-    owner: req.user._id,
-  })
-    .then((card) => res.status(ERROR_CODE.SUCCESS_CREATE).send(card))
+  const { cardId } = req.params;
+  Card.create({ name, link, owner: cardId })
+    .then((card) => {
+      res.status(ERROR_CODE.SUCCESS_CREATE).send(card);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequest('Переданы некорректные данные при создании карточки'));
-      } else {
-        next(err);
+        return next(new BadRequest('Переданы некорректные данные при создании карточки'));
       }
+      return next(err);
     });
 };
 

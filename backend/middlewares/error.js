@@ -1,9 +1,12 @@
-const errorHandler = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
+const { ERROR_CODE } = require('../utils/errors');
 
-  const message = statusCode === 500 ? 'На сервере произошла ошибка' : err.message;
-  res.status(statusCode).send({ message });
+const error = (err, req, res, next) => {
+  if (!err.statusCode) {
+    res.status(ERROR_CODE.INTERNAL_SERVER_ERROR).send({ message: 'Ошибка на сервере' });
+  } else {
+    res.status(err.statusCode).send({ message: err.message });
+  }
   next();
 };
 
-module.exports = errorHandler;
+module.exports = error;
