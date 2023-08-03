@@ -2,25 +2,25 @@ import Like from '../images/Like.svg';
 import React from 'react';
 import { CurrentUserContext } from '../context/CurrentUserContext';
 
-function Card({ card, onCardClick, onCardLike, onCardDelete }) {
+function Card(props) {
 
     function handleClick() {
-        onCardClick(card)
+        props.onCardClick(props.card)
     }
 
     function handleLikeClick() {
-        onCardLike(card);
+        props.onCardLike(props.card);
     }
 
     function handleDeleteClick() {
-        onCardDelete(card);
+        props.onCardDelete(props.card);
     }
 
     const currentUser = React.useContext(CurrentUserContext);
 
-    const isOwn = card.owner._id === currentUser._id;
+    const isOwn = props.card.owner === currentUser._id;
 
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = props.card.likes.some(i => i === currentUser._id);
 
     const cardLikeButtonClassName = (
         `element__place-reaction ${isLiked && 'element__place-reaction_active'}`
@@ -28,9 +28,9 @@ function Card({ card, onCardClick, onCardLike, onCardDelete }) {
 
     return (
         <li className="element">
-            <img className="element__image" alt={card.name} src={card.link} onClick={handleClick} />
+            <img className="element__image" alt={props.card.name} src={props.card.link} onClick={handleClick} />
             <div className="element__place">
-                <h2 className="element__place-name">{card.name}</h2>
+                <h2 className="element__place-name">{props.card.name}</h2>
                 <div>
                     <button
                         className={cardLikeButtonClassName}
@@ -38,7 +38,7 @@ function Card({ card, onCardClick, onCardLike, onCardDelete }) {
                         onClick={handleLikeClick}>
                         <img src={Like} alt="лайк" />
                     </button>
-                    <p className="element__place-count">{card.likes.length}</p>
+                    <p className="element__place-count">{props.card.likes.length}</p>
                 </div>
             </div>
             {isOwn && <button

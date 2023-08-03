@@ -18,32 +18,43 @@ const getCards = (req, res, next) => {
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const { cardId } = req.params;
-  Card.create({ name, link, owner: cardId })
-    .then((card) => {
-      res.status(ERROR_CODE.SUCCESS_CREATE).send(card);
-    })
+  Card.create({
+    name,
+    link,
+    owner: req.user._id,
+  })
+    .then((card) => res.status(ERROR_CODE.SUCCESS_CREATE).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequest('Переданы некорректные данные при создании карточки'));
+        next(new BadRequest('Переданы некорректные данные при создании карточки'));
+      } else {
+        next(err);
       }
-      return next(err);
     });
 };
 
-const deleteCards = (req, res, next) => {
-  const { cardId } = req.params;
-  Card.findById(cardId)
-    .then((card) => {
-      if (!card) {
-        throw new NotFound('Карточка не найдена');
-      } else if (card.owner.toString() !== req.user._id) {
-        return Promise.reject(new ForbiddenError('Вы не можете удалить чужую карточку'));
-      }
-      return card.deleteOne().then(() => res.status(200).send({ message: 'Карточка удалена' }));
-    })
-    .catch(next);
-};
+const deleteCards = (req, res, next) => Card.findById(req.params.cardId)
+  .then((card) => {
+    if (!card) {
+      next(new NotFound());
+      return;
+    }
+
+    if (!card.owner.equals(req.user._id)) {
+      next(new ForbiddenError());
+      return;
+    }
+    card.deleteOne()
+      .then(() => res.status(200).send({ message: 'Карточка успешно удалена' }))
+      .catch(next);
+  })
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      next(new BadRequest());
+    } else {
+      next(err);
+    }
+  });
 
 const putCardLikes = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
