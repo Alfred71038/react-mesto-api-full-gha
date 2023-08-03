@@ -1,16 +1,12 @@
 const express = require('express');
-
 const mongoose = require('mongoose');
-
 const bodyParser = require('body-parser');
-
 const cookieParser = require('cookie-parser');
-
-const { PORT = 3000 } = process.env;
+const { errors } = require('celebrate');
 
 const app = express();
 
-const { errors } = require('celebrate');
+const { auth } = require('./middlewares/auth');
 
 const router = require('./routes/index');
 
@@ -29,13 +25,15 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 
 app.use(bodyParser.json());
 
-app.use(cookieParser());
-
 app.use(cors);
 
 app.use(requestLogger);
 
 app.use(router);
+
+app.use(cookieParser());
+
+app.use(auth);
 
 app.use(errorLogger);
 
@@ -43,4 +41,4 @@ app.use(errors());
 
 app.use(error);
 
-app.listen(PORT, () => console.log(`Подключение к порту ${PORT}!`));
+app.listen(3000, () => console.log('Подключение к порту 3000!'));

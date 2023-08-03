@@ -10,9 +10,10 @@ const BadRequest = require('../utils/BadRequest');
 
 const NotFound = require('../utils/NotFound');
 
-const config = require('../config');
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const { ERROR_CODE } = require('../utils/errors');
+const UnauthоrizedError = require('../utils/UnauthоrizedError');
 
 const createUser = (req, res, next) => {
   const {
@@ -126,15 +127,14 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        config.JWT_SECRET,
-      );
-      return res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: true,
-      }).send({ _id: user._id });
+      if (user) {
+        const token = jwt.sign({
+          _id: user._id,
+        }, NODE_ENV === 'production' ? JWT_SECRET : 'secret', { expiresIn: '7d' });
+        res.status(200).send({ jwt: token });
+      } else {
+        next(new UnauthоrizedError());
+      }
     })
     .catch(next);
 };
