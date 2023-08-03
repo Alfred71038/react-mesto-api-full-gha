@@ -8,11 +8,20 @@ const BadRequest = require('../utils/BadRequest');
 
 const ForbiddenError = require('../utils/ForbiddenError');
 
+const getCards = (req, res, next) => {
+  Card.find({})
+    .then((cards) => {
+      res.send({ cards });
+    })
+    .catch(next);
+};
+
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  Card.create({ name, link, owner: req.user._id })
-    .then((user) => {
-      res.status(ERROR_CODE.SUCCESS_CREATE).send(user);
+  const { cardId } = req.params;
+  Card.create({ name, link, owner: cardId })
+    .then((card) => {
+      res.status(ERROR_CODE.SUCCESS_CREATE).send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -20,14 +29,6 @@ const createCard = (req, res, next) => {
       }
       return next(err);
     });
-};
-
-const getCards = (req, res, next) => {
-  Card.find({})
-    .then((cards) => {
-      res.send({ cards });
-    })
-    .catch(next);
 };
 
 const deleteCards = (req, res, next) => {

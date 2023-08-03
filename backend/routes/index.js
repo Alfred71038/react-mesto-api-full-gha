@@ -12,7 +12,6 @@ router.get('/crash-test', () => {
   }, 0);
 });
 
-
 router.use('/*', (req, res, next) => {
   next(new NotFound('Неизвестный запрос'));
 });

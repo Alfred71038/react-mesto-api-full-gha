@@ -40,9 +40,6 @@ app.use(router);
 
 app.use(cookieParser());
 app.use(auth);
-app.get('/signout', (req, res) => {
-  res.clearCookie('jwt').send({ message: 'Выход' });
-});
 
 app.use(errorLogger);
 app.use(errors());

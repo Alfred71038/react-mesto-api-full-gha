@@ -60,19 +60,33 @@ function App() {
     }
 
     useEffect(() => {
-        if(loggedIn)
-        Promise.all([api.getUserInfo(), api.getInitialCards()])
-            .then(([data, card]) => {
-                setCurrentUser(data);
-                setCards(card)
-            })
-            .catch(error => console.log(error))
+        if (loggedIn)
+            Promise.all([api.getUserInfo(), api.getInitialCards()])
+                .then(([data, card]) => {
+                    setCurrentUser(data);
+                    setCards(card)
+                })
+                .catch(error => console.log(error))
     }, [loggedIn]);
 
+    function tokenCheck() {
+        const jwt = localStorage.getItem('jwt');
+        console.log(jwt);
+        if (jwt) {
+            auth.checkToken(jwt)
+                .then(res => {
+                    handleLogin(res.data.email);
+                    navigate('/', { replace: true });
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
+        }
+    }
 
-    useEffect(() => {
+    React.useEffect(() => {
         tokenCheck();
-    },[loggedIn]);
+    }, []);
 
     function handleCardLike(card) {
         const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -147,7 +161,7 @@ function App() {
         auth.authorize({ email, password })
             .then(res => {
                 if (res) {
-                    localStorage.setItem('jwt', res.token);
+                    localStorage.setItem('jwt', res.jwt);
                     handleLogin(email);
                     navigate('/main');
                 }
@@ -157,21 +171,6 @@ function App() {
                 setIsStatusPopupOpen(true);
                 console.log(err);
             })
-    }
-
-
-    function tokenCheck() {
-        const jwt = localStorage.getItem('jwt');
-        if (jwt) {
-            auth.checkToken(jwt)
-                .then(res => {
-                    handleLogin(res.data.email);
-                    navigate('/', { replace: true });
-                })
-                .catch((err) => {
-                    console.error(err);
-                })
-        }
     }
 
     return (
