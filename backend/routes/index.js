@@ -1,15 +1,13 @@
 const router = require('express').Router();
-const celebrate = require('../middlewares/celebrate');
 const usersRouter = require('./users');
 const cardsRouter = require('./cards');
-const { createUser, login } = require('../controllers/users');
+const { auth } = require('../middlewares/auth');
 const NotFound = require('../utils/NotFound');
-
-router.post('/signup', celebrate.celebrateCreateUser, createUser);
-router.post('/signin', celebrate.celebrateLogin, login);
 
 router.use(usersRouter);
 router.use(cardsRouter);
+
+router.use(auth);
 
 router.use('/*', (req, res, next) => {
   next(new NotFound('Неизвестный запрос'));

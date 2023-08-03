@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+const celebrate = require('./middlewares/celebrate');
 
 const app = express();
 
@@ -13,6 +14,8 @@ const router = require('./routes/index');
 const error = require('./middlewares/error');
 
 const cors = require('./middlewares/cors');
+
+const { createUser, login } = require('./controllers/users');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -29,6 +32,9 @@ app.use(cors);
 
 app.use(requestLogger);
 
+app.post('/signup', celebrate.celebrateCreateUser, createUser);
+app.post('/signin', celebrate.celebrateLogin, login);
+
 app.use(router);
 
 app.use(cookieParser());
@@ -36,9 +42,7 @@ app.use(cookieParser());
 app.use(auth);
 
 app.use(errorLogger);
-
 app.use(errors());
-
 app.use(error);
 
 app.listen(3000, () => console.log('Подключение к порту 3000!'));

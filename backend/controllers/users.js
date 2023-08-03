@@ -56,7 +56,7 @@ const createUser = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  User.findById(req.user._id).select('+email')
+  User.findById(req.params._id).select('+email')
     .then((user) => {
       res.send(user);
     })
@@ -72,8 +72,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUser = (req, res, next) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         return next(new NotFound('Пользователь не найден'));
@@ -84,10 +83,12 @@ const getUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
-  const { name, about } = req.body;
-  return User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
-    { name, about },
+    {
+      name: req.body.name,
+      about: req.body.about,
+    },
     {
       new: true,
       runValidators: true,
@@ -125,16 +126,21 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  return User.findOne({ email })
+    .select('+password')
+    .orFail(() => new UnauthоrizedError())
     .then((user) => {
-      if (user) {
-        const token = jwt.sign({
-          _id: user._id,
-        }, NODE_ENV === 'production' ? JWT_SECRET : 'secret', { expiresIn: '7d' });
-        res.status(200).send({ jwt: token });
-      } else {
-        next(new UnauthоrizedError());
-      }
+      bcrypt.compare(String(password), user.password)
+        .then((validId) => {
+          if (validId) {
+            const token = jwt.sign({
+              _id: user._id,
+            }, NODE_ENV === 'production' ? JWT_SECRET : 'secret', { expiresIn: '7d' });
+            res.status(200).send({ jwt: token });
+          } else {
+            next(new UnauthоrizedError());
+          }
+        });
     })
     .catch(next);
 };
