@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const celebrate = require('./middlewares/celebrate');
@@ -26,20 +26,29 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log(`Ошибка при подключении к mongodb ${err.message}.`);
   });
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use(cors);
 
 app.use(requestLogger);
 
-app.post('/signup', celebrate.celebrateCreateUser, createUser);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 app.post('/signin', celebrate.celebrateLogin, login);
+
+app.post('/signup', celebrate.celebrateCreateUser, createUser);
 
 app.use(router);
 
 app.use(cookieParser());
-
 app.use(auth);
+app.get('/signout', (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
+});
 
 app.use(errorLogger);
 app.use(errors());

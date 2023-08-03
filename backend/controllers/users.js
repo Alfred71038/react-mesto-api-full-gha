@@ -15,49 +15,13 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const { ERROR_CODE } = require('../utils/errors');
 const UnauthоrizedError = require('../utils/UnauthоrizedError');
 
-const createUser = (req, res, next) => {
-  const {
-    name,
-    about,
-    avatar,
-    email,
-  } = req.body;
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => {
-      User.create({
-        name,
-        about,
-        avatar,
-        email,
-        password: hash,
-      })
-        .then((user) => {
-          // eslint-disable-next-line no-param-reassign
-          user.password = undefined;
-          res.status(ERROR_CODE.SUCCESS_CREATE).send(user);
-        })
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            next(
-              new BadRequest(
-                'Переданы некорректные данные при создании пользователя',
-              ),
-            );
-          } else if (err.code === 11000) {
-            next(
-              new ConflictError('Пользователь с таким email уже существует'),
-            );
-          } else {
-            next(err);
-          }
-        });
-    })
-    .catch(next);
-};
-
 const getUserInfo = (req, res, next) => {
-  User.findById(req.params._id).select('+email')
+  User.findById(req.params.userId)
     .then((user) => {
+      if (!user) {
+        next(new NotFound('Пользователь не найден'));
+        return;
+      }
       res.send(user);
     })
     .catch(next);
@@ -65,19 +29,18 @@ const getUserInfo = (req, res, next) => {
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((user) => {
-      res.send(user);
-    })
-    .catch(next);
+    .then((users) => res.status(ERROR_CODE.SUCCESS_CREATE).send(users))
+    .catch((err) => next(err));
 };
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        return next(new NotFound('Пользователь не найден'));
+        next(new NotFound('Пользователь не найден'));
+        return;
       }
-      return res.send(user);
+      res.status(ERROR_CODE.SUCCESS_CREATE).send(user);
     })
     .catch(next);
 };
@@ -95,12 +58,19 @@ const updateUser = (req, res, next) => {
       upsert: false,
     },
   )
-    .then((user) => (res.send(user)))
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        return next(new BadRequest('Переданы некорректные данные при обновлении профиля'));
+    .then((user) => {
+      if (!user) {
+        next(new NotFound());
+        return;
       }
-      return next(err);
+      res.status(ERROR_CODE.SUCCESS_CREATE).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequest('Переданы некорректные данные при обновлении профиля'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -121,6 +91,35 @@ const updateAvatar = (req, res, next) => {
         return next(new BadRequest('Переданы некорректные данные при обновлении профиля'));
       }
       return next(err);
+    });
+};
+
+const createUser = (req, res, next) => {
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hashedPassword) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hashedPassword,
+    }))
+    .then((user) => res.status(ERROR_CODE.SUCCESS_CREATE).send(user))
+    .catch((err) => {
+      if (err.code === 11000) {
+        next(new ConflictError());
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequest());
+      } else {
+        next(err);
+      }
     });
 };
 
