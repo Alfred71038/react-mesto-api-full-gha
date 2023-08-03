@@ -16,7 +16,8 @@ const { ERROR_CODE } = require('../utils/errors');
 const UnauthоrizedError = require('../utils/UnauthоrizedError');
 
 const getUserInfo = (req, res, next) => {
-  User.findById(req.params.userId)
+  const { userId } = req.params;
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         next(new NotFound('Пользователь не найден'));
@@ -34,22 +35,15 @@ const getUsers = (req, res, next) => {
 };
 
 const getUser = (req, res, next) => {
-  User.findById(req.user._id)
+  const { userId } = req.params;
+  User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotFound('Пользователь с данным id не существует.');
+        return next(new NotFound('Пользователь не найден'));
       }
-      res.send(user);
+      return res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(BadRequest('Переданы некорректные данные.'));
-      } else if (err.message === 'NotFound') {
-        next(new NotFound('Пользователь с данным id не существует.'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 const updateUser = (req, res, next) => {
