@@ -6,6 +6,13 @@ const NotFound = require('../utils/NotFound');
 router.use(usersRouter);
 router.use(cardsRouter);
 
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
+
 router.use('/*', (req, res, next) => {
   next(new NotFound('Неизвестный запрос'));
 });

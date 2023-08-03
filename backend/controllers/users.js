@@ -37,12 +37,19 @@ const getUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFound('Пользователь не найден'));
-        return;
+        throw new NotFound('Пользователь с данным id не существует.');
       }
-      res.status(ERROR_CODE.SUCCESS_CREATE).send(user);
+      res.send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(BadRequest('Переданы некорректные данные.'));
+      } else if (err.message === 'NotFound') {
+        next(new NotFound('Пользователь с данным id не существует.'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const updateUser = (req, res, next) => {
