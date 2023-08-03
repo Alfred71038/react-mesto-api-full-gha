@@ -59,7 +59,21 @@ function App() {
         setIsStatusPopupOpen(false)
     }
 
+    useEffect(() => {
+        if(loggedIn)
+        Promise.all([api.getUserInfo(), api.getInitialCards()])
+            .then(([data, card]) => {
+                setCurrentUser(data);
+                setCards(card)
+            })
+            .catch(error => console.log(error))
+    }, [loggedIn]);
 
+
+    useEffect(() => {
+        tokenCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[]);
 
     function handleCardLike(card) {
         const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -108,15 +122,15 @@ function App() {
 
     function signOut() {
         setLoggedIn(false);
-        localStorage.removeItem('token')
-        navigate('/sign-in', { replace: true })
+        localStorage.removeItem('jwt')
+        navigate('/signin', { replace: true })
     }
 
     function handleRegisterSubmit({ email, password }) {
         auth.register({ email, password })
             .then(() => {
                 setIsInfoTooltip(true);
-                navigate('/sign-in')
+                navigate('/signin')
             })
             .catch(err => {
                 setIsInfoTooltip(false);
@@ -134,7 +148,7 @@ function App() {
         auth.authorize({ email, password })
             .then(res => {
                 if (res) {
-                    localStorage.setItem('token', res.token);
+                    localStorage.setItem('jwt', res.token);
                     handleLogin(email);
                     navigate('/main');
                 }
@@ -146,33 +160,20 @@ function App() {
             })
     }
 
-    useEffect(() => {
-        function tokenCheck() {
-            const token = localStorage.getItem('token');
-            if (token) {
-                auth.checkToken(token)
-                    .then(res => {
-                        handleLogin(res.data.email);
-                        navigate('/');
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                    })
-            }
+
+    function tokenCheck() {
+        const jwt = localStorage.getItem('jwt');
+        if (jwt) {
+            auth.checkToken(jwt)
+                .then(res => {
+                    handleLogin(res.data.email);
+                    navigate('/', { replace: true });
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
         }
-        tokenCheck();
-    }, [])
-
-
-    useEffect(() => {
-        Promise.all([api.getUserInfo(), api.getInitialCards()])
-            .then(([data, card]) => {
-                setCurrentUser(data);
-                setCards(card)
-            })
-            .catch(error => console.log(error))
-    }, []);
-
+    }
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
@@ -207,17 +208,17 @@ function App() {
                         )} />
 
 
-                    <Route path='/sign-up'
+                    <Route path='/signup'
                         element={<Register
                             handleRegisterSubmit={handleRegisterSubmit} />}
                     />
 
-                    <Route path='/sign-in'
+                    <Route path='/signin'
                         element={<Login
                             handleLoginSubmit={handleLoginSubmit} />}
                     />
 
-                    <Route path='*' element={<Navigate to='/main' replace />} />
+                    <Route path='*' element={<Navigate to='/signin' replace />} />
 
                 </Routes>
 

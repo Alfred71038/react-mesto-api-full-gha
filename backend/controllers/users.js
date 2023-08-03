@@ -10,6 +10,8 @@ const BadRequest = require('../utils/BadRequest');
 
 const NotFound = require('../utils/NotFound');
 
+const config = require('../config');
+
 const { ERROR_CODE } = require('../utils/errors');
 
 const createUser = (req, res, next) => {
@@ -126,8 +128,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'super_strong_password',
-        { expiresIn: '7d' },
+        config.JWT_SECRET,
       );
       return res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
