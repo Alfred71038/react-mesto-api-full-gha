@@ -1,4 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const winston = require('winston');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const expressWinston = require('express-winston');
 
 const requestLogger = expressWinston.logger({

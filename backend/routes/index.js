@@ -1,18 +1,20 @@
 const router = require('express').Router();
+const { auth } = require('../middlewares/auth');
+const celebrate = require('../middlewares/celebrate');
 const usersRouter = require('./users');
 const cardsRouter = require('./cards');
+const { createUser, login } = require('../controllers/users');
 const NotFound = require('../utils/NotFound');
 
-router.use(usersRouter);
-router.use(cardsRouter);
+router.post('/signup', celebrate.celebrateCreateUser, createUser);
+router.post('/signin', celebrate.celebrateLogin, login);
 
-router.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
+router.use(auth);
 
-router.use('/*', (req, res, next) => {
+router.use('/users', usersRouter);
+router.use('/cards', cardsRouter);
+
+router.use('/', (req, res, next) => {
   next(new NotFound('Неизвестный запрос'));
 });
 

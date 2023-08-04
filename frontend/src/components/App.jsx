@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { CurrentUserContext } from '../context/CurrentUserContext';
-import api from '../utils/Api';
+import { api } from '../utils/Api';
 import * as auth from '../utils/Auth';
 
 import Header from './Header';
@@ -59,34 +59,7 @@ function App() {
         setIsStatusPopupOpen(false)
     }
 
-    useEffect(() => {
-        if (loggedIn)
-            Promise.all([api.getUserInfo(), api.getInitialCards()])
-                .then(([data, card]) => {
-                    setCurrentUser(data);
-                    setCards(card)
-                })
-                .catch(error => console.log(error))
-    }, [loggedIn]);
-
-    function tokenCheck() {
-        const jwt = localStorage.getItem('jwt');
-        console.log(jwt);
-        if (jwt) {
-            auth.checkToken(jwt)
-                .then(res => {
-                    handleLogin(res.data.email);
-                    navigate('/', { replace: true });
-                })
-                .catch((err) => {
-                    console.error(err);
-                })
-        }
-    }
-
-    React.useEffect(() => {
-        tokenCheck();
-    }, []);
+    
 
     function handleCardLike(card) {
         const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -173,6 +146,37 @@ function App() {
             })
     }
 
+useEffect(() => {
+        if (loggedIn)
+            Promise.all([api.getUserInfo(), api.getInitialCards()])
+                .then(([data, card]) => {
+                    setCurrentUser(data);
+                    setCards(card)
+                })
+                .catch(error => console.log(error))
+    }, [loggedIn]);
+
+    function tokenCheck() {
+        const jwt = localStorage.getItem('jwt');
+        console.log(jwt);
+        if (jwt) {
+            auth.checkToken(jwt)
+                .then(res => {
+                    handleLogin(res.data.email);
+                    setLoggedIn(true)
+                    navigate('/', { replace: true });
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
+        }
+    }
+
+    React.useEffect(() => {
+        tokenCheck();
+    }, []);
+
+    
     return (
         <CurrentUserContext.Provider value={currentUser}>
 

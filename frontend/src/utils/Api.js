@@ -9,66 +9,69 @@ class Api {
         }
         return Promise.reject(`Ошибка: ${res.status}`);
     }
+    
+    //Список карточек
+    getInitialCards() {
+        return fetch(`${this.baseUrl}/cards`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+        }).then((res) => this._checkResponse(res));
+      }
+
 
     //Инфа с профиля
     getUserInfo() {
         return fetch(`${this.baseUrl}/users/me`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            },
-        }).then(this._checkResponse);
-    }
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+        }).then((res) => this._checkResponse(res));
+      }
 
     patchUserInfo(data) {
-        return fetch(`${this.baseUrl}/users/me/`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            },
-            body: JSON.stringify({
-                name: data.name,
-                about: data.about,
-            })
-        }).then(this._checkResponse);
-    }
-    //Список карточек
-    getInitialCards() {
-        return fetch(`${this.baseUrl}/cards`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            },
-        }).then(this._checkResponse);
-    }
+        return fetch(`${this.baseUrl}/users/me`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+          body: JSON.stringify({
+            name: data.name,
+            about: data.about,
+          }),
+        }).then((res) => this._checkResponse(res));
+      }
+    
 
     //Новая карточка
     createCard(data) {
         return fetch(`${this.baseUrl}/cards`, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            },
-            body: JSON.stringify({
-                name: data.name,
-                link: data.link,
-            })
-        }).then(this._checkResponse);
-    }
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+          body: JSON.stringify({
+            name: data.name,
+            link: data.link,
+          }),
+        }).then((res) => this._checkResponse(res));
+      }
 
-    deleteCard(cardId) {
-        return fetch(`${this.baseUrl}/cards/${cardId}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            },
-        }).then(this._checkResponse);
-    }
+    deleteCard(id) {
+        return fetch(`${this.baseUrl}/cards/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+        }).then((res) => this._checkResponse(res));
+      }
 
     addLike(cardId) {
         return fetch(`${this.baseUrl}/cards/likes/${cardId}`, {
@@ -80,8 +83,8 @@ class Api {
         }).then(this._checkResponse);
     }
 
-    deleteLike(cardId) {
-        return fetch(`${this.baseUrl}/cards/${cardId}/likes`, {
+    deleteLike(id) {
+        return fetch(`${this.baseUrl}/cards/${id}/likes`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -90,33 +93,33 @@ class Api {
         }).then(this._checkResponse);
     }
 
-    changeLikeCardStatus(cardId, isLiked) {
-        if (isLiked) {
-            return this.addLike(cardId);
-        } else {
-            return this.deleteLike(cardId);
-        }
-    }
+    changeLikeCardStatus(id, isLiked) {
+        return fetch(`${this.baseUrl}/cards/${id}/likes`, {
+          method: `${isLiked ? `PUT` : `DELETE`}`,
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+        }).then((res) => this._checkResponse(res));
+      }
 
-    patchUserAvatar(link) {
+    patchUserAvatar(data) {
         return fetch(`${this.baseUrl}/users/me/avatar`, {
-            method: 'PATCH',
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${localStorage.getItem('jwt')}`,
-            },
-            body: JSON.stringify({
-                avatar: link,
-            })
-        }).then(this._checkResponse);
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem('jwt')}`,
+          },
+          body: JSON.stringify({
+            avatar: data.avatar,
+          }),
+        }).then((res) => this._checkResponse(res));
+      }
     }
-
-
-
-}
 
 const api = new Api({
     baseUrl: 'https://backalfred71038.nomoreparties.co',
 });
 
-export default api;
+export { api} ;
+

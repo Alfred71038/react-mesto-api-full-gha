@@ -8,20 +8,11 @@ const BadRequest = require('../utils/BadRequest');
 
 const ForbiddenError = require('../utils/ForbiddenError');
 
-const getCards = (req, res, next) => {
-  Card.find({})
-    .then((cards) => {
-      res.send({ cards });
-    })
-    .catch(next);
-};
-
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const { cardId } = req.params;
-  Card.create({ name, link, owner: cardId })
-    .then((card) => {
-      res.status(ERROR_CODE.SUCCESS_CREATE).send(card);
+  Card.create({ name, link, owner: req.user._id })
+    .then((user) => {
+      res.status(ERROR_CODE.SUCCESS_CREATE).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -31,28 +22,27 @@ const createCard = (req, res, next) => {
     });
 };
 
-const deleteCards = (req, res, next) => Card.findById(req.params.cardId)
-  .then((card) => {
-    if (!card) {
-      next(new NotFound());
-      return;
-    }
+const getCards = (req, res, next) => {
+  Card.find({})
+    .then((cards) => {
+      res.send({ cards });
+    })
+    .catch(next);
+};
 
-    if (!card.owner.equals(req.user._id)) {
-      next(new ForbiddenError());
-      return;
-    }
-    card.deleteOne()
-      .then(() => res.status(200).send({ message: 'Карточка успешно удалена' }))
-      .catch(next);
-  })
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      next(new BadRequest());
-    } else {
-      next(err);
-    }
-  });
+const deleteCards = (req, res, next) => {
+  const { cardId } = req.params;
+  Card.findById(cardId)
+    .then((card) => {
+      if (!card) {
+        throw new NotFound('Карточка не найдена');
+      } else if (card.owner.toString() !== req.user._id) {
+        return Promise.reject(new ForbiddenError('Вы не можете удалить чужую карточку'));
+      }
+      return card.deleteOne().then(() => res.status(200).send({ message: 'Карточка удалена' }));
+    })
+    .catch(next);
+};
 
 const putCardLikes = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
