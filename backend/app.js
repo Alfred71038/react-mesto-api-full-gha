@@ -6,15 +6,17 @@ const bodyParser = require('body-parser');
 
 const cookieParser = require('cookie-parser');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 
 const { errors } = require('celebrate');
 
-const router = require('./routes/index');
+const router = require('./routes');
 
 const error = require('./middlewares/error');
+
+const cors = require('./middlewares/cors');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -23,7 +25,10 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log('Подключение к mongodb.');
   }).catch((err) => {
     console.log(`Ошибка при подключении к mongodb ${err.message}.`);
-  });
+  })
+
+app.use(cors);
+
 
 app.use(bodyParser.json());
 

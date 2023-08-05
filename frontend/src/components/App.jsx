@@ -59,7 +59,35 @@ function App() {
         setIsStatusPopupOpen(false)
     }
 
-    
+    useEffect(() => {
+        if (loggedIn)
+            Promise.all([api.getUserInfo(), api.getInitialCards()])
+                .then(([data, card]) => {
+                    setCurrentUser(data);
+                    setCards(card)
+                })
+                .catch(error => console.log(error))
+    }, [loggedIn]);
+
+    function tokenCheck() {
+        const token = localStorage.getItem('jwt');
+        console.log(token);
+        if (token) {
+            auth.checkToken(token)
+                .then(res => {
+                    handleLogin(res.data.email);
+                    setLoggedIn(true)
+                    navigate('/', { replace: true });
+                })
+                .catch((err) => {
+                    console.error(err);
+                })
+        }
+    }
+
+    React.useEffect(() => {
+        tokenCheck();
+    }, []);
 
     function handleCardLike(card) {
         const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -116,7 +144,7 @@ function App() {
         auth.register({ email, password })
             .then(() => {
                 setIsInfoTooltip(true);
-                navigate('/signin')
+                navigate('/sign-in', { replace: true })
             })
             .catch(err => {
                 setIsInfoTooltip(false);
@@ -134,7 +162,8 @@ function App() {
         auth.authorize({ email, password })
             .then(res => {
                 if (res) {
-                    localStorage.setItem('jwt', res.jwt);
+                    localStorage.setItem('jwt', res.token);
+                    console.log(localStorage.getItem('jwt'));
                     handleLogin(email);
                     navigate('/main');
                 }
@@ -146,35 +175,7 @@ function App() {
             })
     }
 
-useEffect(() => {
-        if (loggedIn)
-            Promise.all([api.getUserInfo(), api.getInitialCards()])
-                .then(([data, card]) => {
-                    setCurrentUser(data);
-                    setCards(card)
-                })
-                .catch(error => console.log(error))
-    }, [loggedIn]);
 
-    function tokenCheck() {
-        const jwt = localStorage.getItem('jwt');
-        console.log(jwt);
-        if (jwt) {
-            auth.checkToken(jwt)
-                .then(res => {
-                    handleLogin(res.data.email);
-                    setLoggedIn(true)
-                    navigate('/', { replace: true });
-                })
-                .catch((err) => {
-                    console.error(err);
-                })
-        }
-    }
-
-    React.useEffect(() => {
-        tokenCheck();
-    }, []);
 
     
     return (

@@ -1,4 +1,7 @@
-export const BASE_URL = 'https://backalfred71038.nomoreparties.co';
+export const BASE_URL = {BASE_URL: 'http://localhost:3001',
+headers: {
+  'Content-type': 'application/json',
+},}
 
 function checkStatusError (res) {
     if(res.ok) {
