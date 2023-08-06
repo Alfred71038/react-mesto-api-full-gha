@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { CurrentUserContext } from '../context/CurrentUserContext';
 import api from '../utils/Api';
@@ -185,7 +185,7 @@ function App() {
                     setCards(data.card.reverse());
                 }).catch(error => console.log(error))
         }
-    }, [loggedIn]);
+    }, []);
 
 
     return (

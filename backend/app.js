@@ -1,10 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 
 const bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
 
-require('dotenv').config();
+const cors = require('cors');
 
 const { PORT = 3000 } = process.env;
 
@@ -18,7 +19,20 @@ const error = require('./middlewares/error');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const Cors = require('./middlewares/cors');
+const corsOptions = {
+  origin: [
+    'http://alfred71038.nomoreparties.co',
+    'https://alfred71038.nomoreparties.co',
+    'https://backalfred71038.nomoreparties.co',
+    'http://backalfred71038.nomoreparties.co',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ],
+  optionsSuccessStatus: 200,
+  credentials: true, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+// const сors = require('./middlewares/cors');
 
 const app = express();
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
@@ -30,7 +44,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 
 app.use(requestLogger);
 
-app.use(Cors);
+// app.use(сors);
+
+app.use(cors(corsOptions));
 
 app.get('/crash-test', () => {
   setTimeout(() => {

@@ -1,8 +1,8 @@
 class Api {
-    constructor(config) {
-        this._url = config.url
-        this._headers = config.headers
-        this._credentials = config.credentials;
+    constructor(setting) {
+        this._url = setting.url
+        this._headers = setting.headers
+        this._credentials = setting.credentials;
     }
 
     _checkResponse(res) {

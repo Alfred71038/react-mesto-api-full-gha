@@ -1,6 +1,6 @@
 const allowedCors = [
-  'https://alfred71038.nomoreparties.co',
   'http://alfred71038.nomoreparties.co',
+  'https://alfred71038.nomoreparties.co',
   'https://backalfred71038.nomoreparties.co',
   'http://backalfred71038.nomoreparties.co',
   'http://localhost:3000',
@@ -12,14 +12,12 @@ const cors = (req, res, next) => {
   const { method } = req;
   const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
   const requestHeaders = req.headers['access-control-request-headers'];
-  // const requestHeaders = 'content-type, Authorization';
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', true);
   }
 
   if (method === 'OPTIONS') {
-    // разрешаем кросс-доменные запросы любых типов (по умолчанию)
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
     res.header('Access-Control-Allow-Headers', requestHeaders);
     return res.end();
