@@ -102,9 +102,8 @@ class Api {
 }
 
 const api = new Api ({
-    url: 'http://localhost:3000',
+    url: 'https://backalfred71038.nomoreparties.co',
     headers: {
-        authorization: '0d29d6a1-12b3-4f3a-8832-50cb159ade75',
         "Content-Type": "application/json",
     },
     credentials: 'include'
