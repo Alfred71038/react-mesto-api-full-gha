@@ -1,34 +1,26 @@
-const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
 const allowedCors = [
-  'http://alfred71038.nomoreparties.co',
   'https://alfred71038.nomoreparties.co',
+  'http://alfred71038.nomoreparties.co',
   'https://backalfred71038.nomoreparties.co',
   'http://backalfred71038.nomoreparties.co',
+  'https://localhost:3000',
   'http://localhost:3000',
-  'http://localhost:3001',
 ];
-
-// eslint-disable-next-line consistent-return
 const cors = (req, res, next) => {
   const { origin } = req.headers;
   const { method } = req;
   const requestHeaders = req.headers['access-control-request-headers'];
-
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+  res.header('Access-Control-Allow-Credentials', true);
   if (allowedCors.includes(origin)) {
-    res.header({
-      'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Credentials': true,
-    });
+    res.header('Access-Control-Allow-Origin', origin);
   }
-
   if (method === 'OPTIONS') {
-    res.header({
-      'Access-Control-Allow-Headers': requestHeaders,
-      'Access-Control-Allow-Methods': DEFAULT_ALLOWED_METHODS,
-    });
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+    res.header('Access-Control-Allow-Headers', requestHeaders);
     return res.end();
   }
-  next();
+  return next();
 };
 
 module.exports = cors;
