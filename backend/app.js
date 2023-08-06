@@ -32,7 +32,7 @@ const corsOptions = {
   credentials: true, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-// const сors = require('./middlewares/cors');
+const Cors = require('./middlewares/cors');
 
 const app = express();
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
@@ -44,7 +44,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 
 app.use(requestLogger);
 
-// app.use(сors);
+app.use(Cors);
 
 app.use(cors(corsOptions));
 
