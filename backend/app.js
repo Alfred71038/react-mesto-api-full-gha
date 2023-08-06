@@ -17,21 +17,21 @@ const error = require('./middlewares/error');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
-const Cors = require('./middlewares/cors');
-
-
+const cors = require('./middlewares/cors');
 
 const app = express();
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => {
+    // eslint-disable-next-line no-console
     console.log('Подключение к mongodb.');
   }).catch((err) => {
+    // eslint-disable-next-line no-console
     console.log(`Ошибка при подключении к mongodb ${err.message}.`);
   });
 
 app.use(requestLogger);
 
-app.use(Cors);
+app.use(cors);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -51,4 +51,5 @@ app.use(errors());
 
 app.use(error);
 
+// eslint-disable-next-line no-console
 app.listen(PORT, () => console.log(`Подключение к порту ${PORT}!`));

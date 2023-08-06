@@ -185,7 +185,7 @@ function App() {
                     setCards(data.card.reverse());
                 }).catch(error => console.log(error))
         }
-    }, []);
+    }, [loggedIn]);
 
 
     return (
