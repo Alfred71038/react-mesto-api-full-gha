@@ -1,14 +1,14 @@
 const express = require('express');
 
-const mongoose = require('mongoose');
-
 const bodyParser = require('body-parser');
 
+const mongoose = require('mongoose');
+
+require('dotenv').config();
+
+const { PORT = 3000 } = process.env;
+
 const cookieParser = require('cookie-parser');
-
-const { PORT = 3001 } = process.env;
-
-const app = express();
 
 const { errors } = require('celebrate');
 
@@ -16,25 +16,31 @@ const router = require('./routes');
 
 const error = require('./middlewares/error');
 
-const cors = require('./middlewares/cors');
-
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
+const Cors = require('./middlewares/cors');
+
+const app = express();
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => {
     console.log('Подключение к mongodb.');
   }).catch((err) => {
     console.log(`Ошибка при подключении к mongodb ${err.message}.`);
-  })
+  });
 
-app.use(cors);
+app.use(requestLogger);
 
+app.use(Cors);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.use(bodyParser.json());
 
 app.use(cookieParser());
-
-app.use(requestLogger);
 
 app.use(router);
 

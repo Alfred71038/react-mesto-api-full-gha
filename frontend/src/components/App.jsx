@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { CurrentUserContext } from '../context/CurrentUserContext';
-import { api } from '../utils/Api';
+import api from '../utils/Api';
 import * as auth from '../utils/Auth';
 
 import Header from './Header';
@@ -29,9 +29,10 @@ function App() {
     const [cards, setCards] = useState([]);
     const [loggedIn, setLoggedIn] = useState(false)
     const navigate = useNavigate();
-    const [userEmail, setUserEmail] = useState({ email: '' });
+    const [userEmail, setUserEmail] = useState('');
     const [isStatusPopupOpen, setIsStatusPopupOpen] = useState(false)
     const [isInfoTooltip, setIsInfoTooltip] = useState(false)
+
 
     function handleEditProfileClick() {
         setIsEditProfilePopupOpen(true);
@@ -59,41 +60,13 @@ function App() {
         setIsStatusPopupOpen(false)
     }
 
-    useEffect(() => {
-        if (loggedIn)
-            Promise.all([api.getUserInfo(), api.getInitialCards()])
-                .then(([data, card]) => {
-                    setCurrentUser(data);
-                    setCards(card)
-                })
-                .catch(error => console.log(error))
-    }, [loggedIn]);
 
-    function tokenCheck() {
-        const token = localStorage.getItem('jwt');
-        console.log(token);
-        if (token) {
-            auth.checkToken(token)
-                .then(res => {
-                    handleLogin(res.data.email);
-                    setLoggedIn(true)
-                    navigate('/', { replace: true });
-                })
-                .catch((err) => {
-                    console.error(err);
-                })
-        }
-    }
-
-    React.useEffect(() => {
-        tokenCheck();
-    }, []);
 
     function handleCardLike(card) {
-        const isLiked = card.likes.some(i => i._id === currentUser._id);
+        const isLiked = card.likes.some(i => i === currentUser._id);
 
         api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-            setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+            setCards((state) => state.map((c) => { return (c._id === card._id ? newCard : c) }));
         })
             .catch(error => console.log(error))
     }
@@ -134,38 +107,23 @@ function App() {
             .catch(error => console.log(error))
     }
 
-    function signOut() {
-        setLoggedIn(false);
-        localStorage.removeItem('jwt')
-        navigate('/signin', { replace: true })
+    const tokenCheck = () => {
+        const token = localStorage.getItem('cookie');
+        if (token) {
+            console.log(token);
+            setLoggedIn(true);
+            navigate('/singin', { replace: true });
+        }
     }
 
-    function handleRegisterSubmit({ email, password }) {
-        auth.register({ email, password })
-            .then(() => {
-                setIsInfoTooltip(true);
-                navigate('/sign-in', { replace: true })
-            })
-            .catch(err => {
-                setIsInfoTooltip(false);
-                console.error(err)
-            })
-            .finally(() => setIsStatusPopupOpen(true));
-    }
-
-    function handleLogin(email) {
-        setLoggedIn(true)
-        setUserEmail(email)
-    }
-
-    function handleLoginSubmit({ email, password }) {
+    const handleLoginSubmit = ({ email, password }) => {
         auth.authorize({ email, password })
             .then(res => {
-                if (res) {
-                    localStorage.setItem('jwt', res.token);
-                    console.log(localStorage.getItem('jwt'));
-                    handleLogin(email);
-                    navigate('/main');
+                if (password && email !== '') {
+                    localStorage.setItem('cookie', true);
+                    setUserEmail(email);
+                    setLoggedIn(true);
+                    navigate('/', { replace: true });
                 }
             })
             .catch(err => {
@@ -175,9 +133,67 @@ function App() {
             })
     }
 
+    const handleRegisterSubmit = ({ email, password }) => {
+        const data = { password, email };
+        auth.register(data)
+            .then(() => {
+                setIsInfoTooltip({
+                    access: true,
+                    message: 'Вы зарегистрировались!',
+                });
+                setIsStatusPopupOpen(true)
+                navigate('/sign-in', { replace: true })
+            })
+            .catch(err => {
+                setIsInfoTooltip(false);
+                console.error(err)
+            })
+            .finally(() => setIsStatusPopupOpen(true));
+    }
+
+    const signOut = () => {
+        auth.userSignOut()
+            .then((res) => {
+                if (res.exit) {
+                    console.log('Back');
+                    localStorage.removeItem('cookie');
+                    setLoggedIn(false);
+                    setUserEmail('');
+                    navigate('/sign-in', { replace: true });
+                    document.cookie = "jwtChek=; expires=Mon, 26 Dec 1991 00:00:01 GMT;";
+                }
+            })
+            .catch(error => console.log(error))
+    };
+
+    React.useEffect(() => {
+        tokenCheck();
+    }, []);
+
+    React.useEffect(() => {
+        if (loggedIn === true) {
+            api.getUserInfo()
+                .then((data) => {
+                    setCurrentUser(data);
+                })
+                .catch((err) => {
+                   signOut();
+                    if(err === 401) {
+                        setIsInfoTooltip({
+                        access: false,
+                        message: 'Время авторизации истекло. Войдте заново.',
+                      });
+                    setIsStatusPopupOpen(true);}  
+                });
+
+            api.getInitialCards()
+                .then((data) => {
+                    setCards(data.card.reverse());
+                }).catch(error => console.log(error))
+        }
+    }, [loggedIn]);
 
 
-    
     return (
         <CurrentUserContext.Provider value={currentUser}>
 
@@ -189,7 +205,7 @@ function App() {
                     userEmail={userEmail}
                 />
                 <Routes>
-                    <Route path='/main'
+                    <Route path='/'
                         element={(
                             <>
                                 <ProtectedRoute
@@ -211,17 +227,19 @@ function App() {
                         )} />
 
 
-                    <Route path='/signup'
+                    <Route path='/sign-up'
                         element={<Register
-                            handleRegisterSubmit={handleRegisterSubmit} />}
+                            handleRegisterSubmit={handleRegisterSubmit}
+                        />}
                     />
 
-                    <Route path='/signin'
+                    <Route path='/sign-in'
                         element={<Login
-                            handleLoginSubmit={handleLoginSubmit} />}
+                            handleLoginSubmit={handleLoginSubmit}
+                        />}
                     />
 
-                    <Route path='*' element={<Navigate to='/signin' replace />} />
+                    <Route path='*' element={<Navigate to='/' replace />} />
 
                 </Routes>
 

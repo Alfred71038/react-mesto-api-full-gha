@@ -1,47 +1,57 @@
-export const BASE_URL = {BASE_URL: 'http://localhost:3001',
-headers: {
-  'Content-type': 'application/json',
-},}
+export const BASE_URL = 'http://localhost:3000';
 
-function checkStatusError (res) {
-    if(res.ok) {
+function checkStatusError(res) {
+    if (res.ok) {
         return res.json();
+    } else {
+        return Promise.reject(`Ошибка: ${res.status}`);
     }
-    return Promise.reject(`Ошибка: ${res.status}`);
 }
+
 
 export const register = ({ email, password }) => {
     return fetch(`${BASE_URL}/signup`, {
         method: 'POST',
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
     })
-        .then(checkStatusError)  
+        .then(checkStatusError)
 };
 
 export const authorize = ({ email, password }) => {
     return fetch(`${BASE_URL}/signin`, {
         method: 'POST',
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
     })
-        .then(checkStatusError)    
+        .then(checkStatusError)
 };
 
 export const checkToken = (token) => {
-    return fetch (`${BASE_URL}/users/me`, {
+    return fetch(`${BASE_URL}/users/me`, {
         method: 'GET',
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
         },
+        credentials: 'include',
     })
-    .then(checkStatusError);
+        .then(checkStatusError);
+}
+
+export const userSignOut = () => {
+    return fetch(`${BASE_URL}/signout`, {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json',
+        },
+        credentials: 'include',
+    })
+        .then(checkStatusError);
 }

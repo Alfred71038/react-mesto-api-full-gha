@@ -11,8 +11,6 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike
 
     const currentUser = React.useContext(CurrentUserContext);
 
-
-
     return (
         <>
             <main className="content">

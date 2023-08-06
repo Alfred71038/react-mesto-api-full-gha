@@ -19,11 +19,11 @@ function Register({ handleRegisterSubmit }) {
         });
     }
 
-    const { email, password } = formValue;
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleRegisterSubmit({ email, password })
+        const { email, password } = formValue;
+        handleRegisterSubmit(formValue)
     }
 
     return (
@@ -60,7 +60,7 @@ function Register({ handleRegisterSubmit }) {
                 </button>
             </form>
             <p className="register__sign-in">Уже зарегистрированы?&ensp;
-                <Link to='/signin' className="register__login-link" href="#">Войти</Link>
+                <Link to='/sign-in' className="register__login-link" href="#">Войти</Link>
             </p>
         </div>
     )

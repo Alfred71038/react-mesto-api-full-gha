@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 
 const bcrypt = require('bcryptjs');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const User = require('../models/user');
 
 const ConflictError = require('../utils/ConflictError');
@@ -35,19 +37,36 @@ const createUser = (req, res, next) => {
         })
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            next(
+            return next(
               new BadRequest(
                 'Переданы некорректные данные при создании пользователя',
               ),
             );
-          } else if (err.code === 11000) {
-            next(
+          } if (err.code === 11000) {
+            return next(
               new ConflictError('Пользователь с таким email уже существует'),
             );
-          } else {
-            next(err);
           }
+          return next(err);
         });
+    })
+    .catch(next);
+};
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        { expiresIn: '7d' },
+      );
+      return res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true,
+      }).send({ _id: user._id });
     })
     .catch(next);
 };
@@ -120,30 +139,21 @@ const updateAvatar = (req, res, next) => {
     });
 };
 
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        'super_strong_password',
-        { expiresIn: '7d' },
-      );
-      return res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: true,
-      }).send({ _id: user._id });
-    })
-    .catch(next);
+const userSignOut = (req, res, next) => {
+  try {
+    res.clearCookie('jwt', { httpOnly: true }).send({ exit: 'sign out' });
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {
   createUser,
+  login,
   getUser,
   getUsers,
   getUserInfo,
   updateUser,
   updateAvatar,
-  login,
+  userSignOut,
 };
