@@ -137,10 +137,7 @@ function App() {
         const data = { password, email };
         auth.register(data)
             .then(() => {
-                setIsInfoTooltip({
-                    access: true,
-                    message: 'Вы зарегистрировались!',
-                });
+                setIsInfoTooltip(true);
                 setIsStatusPopupOpen(true)
                 navigate('/sign-in', { replace: true })
             })
@@ -179,10 +176,7 @@ function App() {
                 .catch((err) => {
                    signOut();
                     if(err === 401) {
-                        setIsInfoTooltip({
-                        access: false,
-                        message: 'Время авторизации истекло. Войдте заново.',
-                      });
+                        setIsInfoTooltip(false);
                     setIsStatusPopupOpen(true);}  
                 });
 
