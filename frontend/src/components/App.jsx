@@ -118,8 +118,9 @@ function App() {
 
     const handleLoginSubmit = ({ email, password }) => {
         auth.authorize({ email, password })
-            .then(res => {
+            .then((res) => {
                 if (password && email !== '') {
+                    const { token } = res;
                     localStorage.setItem('cookie', true);
                     setUserEmail(email);
                     setLoggedIn(true);
@@ -160,7 +161,7 @@ function App() {
                     document.cookie = "jwtChek=; expires=Mon, 26 Dec 1991 00:00:01 GMT;";
                 }
             })
-            .catch(error => console.log(error))
+            .catch((error) => console.log(error))
     };
 
     React.useEffect(() => {
