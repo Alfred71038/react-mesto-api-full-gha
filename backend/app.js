@@ -1,4 +1,4 @@
-//require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 
 const bodyParser = require('body-parser');
@@ -51,5 +51,4 @@ app.use(errors());
 
 app.use(error);
 
-// eslint-disable-next-line no-console
 app.listen(PORT, () => console.log(`Подключение к порту ${PORT}!`));
