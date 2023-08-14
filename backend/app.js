@@ -6,8 +6,6 @@ const mongoose = require('mongoose');
 
 require('dotenv').config();
 
-const Cors = require('cors');
-
 const { PORT = 3000 } = process.env;
 
 const cookieParser = require('cookie-parser');
@@ -33,7 +31,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 
 app.use(requestLogger);
 
-app.use(cors);
+app.use(cors)
 
 app.get('/crash-test', () => {
   setTimeout(() => {
