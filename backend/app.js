@@ -1,9 +1,12 @@
-require('dotenv').config();
 const express = require('express');
 
 const bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
+
+require('dotenv').config();
+
+const Cors = require('cors');
 
 const { PORT = 3000 } = process.env;
 
@@ -20,12 +23,11 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const cors = require('./middlewares/cors');
 
 const app = express();
+
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => {
-    // eslint-disable-next-line no-console
     console.log('Подключение к mongodb.');
   }).catch((err) => {
-    // eslint-disable-next-line no-console
     console.log(`Ошибка при подключении к mongodb ${err.message}.`);
   });
 
