@@ -20,18 +20,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 
-const cors = require('cors');
-
-const corsConfig = {
-  origin: [
-    'http://alfred71038.nomoreparties.co',
-    'https://alfred71038.nomoreparties.co',
-    'http://backalfred71038.nomoreparties.co',
-    'https://backalfred71038.nomoreparties.co',
-  ],
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-  credentials: true,
-}
+const cors = require('./middlewares/cors');
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
   .then(() => {
@@ -40,9 +29,11 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
     console.log(`Ошибка при подключении к mongodb ${err.message}.`);
   });
 
-app.use(cors(corsConfig));
+
 
 app.use(requestLogger);
+
+app.use(cors);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
