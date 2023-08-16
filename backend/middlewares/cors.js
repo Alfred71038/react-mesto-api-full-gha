@@ -3,8 +3,8 @@ const allowedCors = [
   'http://alfred71038.nomoreparties.co',
   'https://backalfred71038.nomoreparties.co',
   'http://backalfred71038.nomoreparties.co',
-  'https://localhost:3000',
   'http://localhost:3000',
+  'http://localhost:3001',
 ];
 const cors = (req, res, next) => {
   const { origin } = req.headers;
