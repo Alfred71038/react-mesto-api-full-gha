@@ -102,7 +102,7 @@ class Api {
 }
 
 const api = new Api ({
-    url: 'http://backalfred71038.nomoreparties.co',
+    url: 'https://backalfred71038.nomoreparties.co',
     headers: {
         "Content-Type": "application/json",
     },
