@@ -107,15 +107,6 @@ function App() {
             .catch(error => console.log(error))
     }
 
-    /*const tokenCheck = () => {
-        const token = localStorage.getItem('cookie');
-        if (token) {
-            console.log(token);
-            setLoggedIn(true);
-            navigate('/singin', { replace: true });
-        }
-    }*/
-
     React.useEffect(() => {
         if (loggedIn) {
             api.getUserInfo()
@@ -208,32 +199,6 @@ function App() {
             })
             .catch((error) => console.log(error))
     };
-
-
-
-
-
-
-    /*React.useEffect(() => {
-        if (loggedIn === true) {
-            api.getUserInfo()
-                .then((data) => {
-                    setCurrentUser(data);
-                })
-                .catch((err) => {
-                   //signOut();
-                    if(err === 401) {
-                        setIsInfoTooltip(false);
-                    setIsStatusPopupOpen(true);}  
-                });
-
-            api.getInitialCards()
-                .then((data) => {
-                    setCards(data.card.reverse());
-                }).catch(error => console.log(error))
-        }
-    }, [loggedIn]);*/
-
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
