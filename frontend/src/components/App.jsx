@@ -107,14 +107,14 @@ function App() {
             .catch(error => console.log(error))
     }
 
-    const tokenCheck = () => {
+    /*const tokenCheck = () => {
         const token = localStorage.getItem('cookie');
         if (token) {
             console.log(token);
             setLoggedIn(true);
             navigate('/singin', { replace: true });
         }
-    }
+    }*/
 
     React.useEffect(() => {
         if (loggedIn) {
@@ -147,6 +147,7 @@ function App() {
             auth.checkToken(token)
                 .then((user) => {
                     handleLogin(user.email);
+                    handleCardClick(user.card)
                     setLoggedIn(true);
                     navigate('/singin', { replace: true });
                 })
