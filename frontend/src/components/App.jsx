@@ -147,7 +147,6 @@ function App() {
             auth.checkToken(token)
                 .then((user) => {
                     handleLogin(user.email);
-                    handleCardClick(user.card)
                     setLoggedIn(true);
                     navigate('/singin', { replace: true });
                 })
