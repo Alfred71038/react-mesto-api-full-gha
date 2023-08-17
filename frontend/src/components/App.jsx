@@ -122,17 +122,17 @@ function App() {
                 .then((data) =>
                     setCurrentUser(data)
                 )
-                .catch((err) => console.log(`ОшибОЧКА ДРУГАЛЁЧЕК: ${err}`));
+                .catch(error => console.log(error))
         }
     }, [loggedIn])
 
     React.useEffect(() => {
         if (loggedIn) {
             api.getInitialCards()
-                .then((cards) =>
-                    setCards(cards.reverse())
+                .then((card) =>
+                    setCards(card.reverse())
                 )
-                .catch((err) => console.log(`ОшибОЧКА ДРУГАЛЁЧЕК: ${err}`));
+                .catch(error => console.log(error));
         }
     }, [loggedIn])
 
