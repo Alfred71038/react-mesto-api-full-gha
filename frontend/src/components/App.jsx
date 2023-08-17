@@ -129,12 +129,16 @@ function App() {
     React.useEffect(() => {
         if (loggedIn) {
             api.getInitialCards()
-                .then((card) =>
-                    setCards(card.reverse())
+                .then((data) =>
+                    setCards(data.cards.reverse())
                 )
                 .catch(error => console.log(error));
         }
     }, [loggedIn])
+
+    React.useEffect(() => {
+        handleCheckToken();
+    }, []);
 
     function handleLogin(email) {
         setLoggedIn(true)
@@ -153,7 +157,7 @@ function App() {
                 .catch((err) => {
                     console.log(err);
                     setLoggedIn(false);
-                  });
+                });
         }
     }
 
@@ -205,9 +209,7 @@ function App() {
             .catch((error) => console.log(error))
     };
 
-    React.useEffect(() => {
-        handleCheckToken();
-    }, []);
+
 
 
 
