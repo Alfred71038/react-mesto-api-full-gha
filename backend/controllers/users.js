@@ -33,7 +33,7 @@ const createUser = (req, res, next) => {
         .then((user) => {
           // eslint-disable-next-line no-param-reassign
           user.password = undefined;
-          res.status(ERROR_CODE.SUCCESS_CREATE).send(user);
+          res.status(201).send(user);
         })
         .catch((err) => {
           if (err.name === 'ValidationError') {
