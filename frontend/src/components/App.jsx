@@ -116,6 +116,47 @@ function App() {
         }
     }
 
+    React.useEffect(() => {
+        if (loggedIn) {
+            api.getUserInfo()
+                .then((data) =>
+                    setCurrentUser(data)
+                )
+                .catch((err) => console.log(`ОшибОЧКА ДРУГАЛЁЧЕК: ${err}`));
+        }
+    }, [loggedIn])
+
+    React.useEffect(() => {
+        if (loggedIn) {
+            api.getInitialCards()
+                .then((cards) =>
+                    setCards(cards.reverse())
+                )
+                .catch((err) => console.log(`ОшибОЧКА ДРУГАЛЁЧЕК: ${err}`));
+        }
+    }, [loggedIn])
+
+    function handleLogin(email) {
+        setLoggedIn(true)
+        setUserEmail(email)
+    }
+
+    function handleCheckToken() {
+        const token = localStorage.getItem('cookie');
+        if (token) {
+            auth.checkToken(token)
+                .then((user) => {
+                    handleLogin(user.email);
+                    setLoggedIn(true);
+                    navigate('/singin', { replace: true });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setLoggedIn(false);
+                  });
+        }
+    }
+
     const handleLoginSubmit = ({ email, password }) => {
         auth.authorize({ email, password })
             .then((res) => {
@@ -165,17 +206,20 @@ function App() {
     };
 
     React.useEffect(() => {
-        tokenCheck();
+        handleCheckToken();
     }, []);
 
-    React.useEffect(() => {
+
+
+
+    /*React.useEffect(() => {
         if (loggedIn === true) {
             api.getUserInfo()
                 .then((data) => {
                     setCurrentUser(data);
                 })
                 .catch((err) => {
-                   signOut();
+                   //signOut();
                     if(err === 401) {
                         setIsInfoTooltip(false);
                     setIsStatusPopupOpen(true);}  
@@ -186,7 +230,7 @@ function App() {
                     setCards(data.card.reverse());
                 }).catch(error => console.log(error))
         }
-    }, [loggedIn]);
+    }, [loggedIn]);*/
 
 
     return (

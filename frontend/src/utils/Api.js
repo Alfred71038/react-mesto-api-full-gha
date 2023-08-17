@@ -102,11 +102,11 @@ class Api {
 }
 
 const api = new Api ({
-    url: 'https://backalfred71038.nomoreparties.co',
+    url: 'http://localhost:3000',
     headers: {
-        "Content-Type": "application/json",
-    },
-    credentials: 'include'
+        authorization: '0d29d6a1-12b3-4f3a-8832-50cb159ade75',
+        "Content-Type": "application/json"
+    }
   });
 
 export default api;

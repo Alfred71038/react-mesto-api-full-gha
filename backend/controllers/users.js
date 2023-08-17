@@ -12,8 +12,6 @@ const BadRequest = require('../utils/BadRequest');
 
 const NotFound = require('../utils/NotFound');
 
-const { ERROR_CODE } = require('../utils/errors');
-
 const createUser = (req, res, next) => {
   const {
     name,
